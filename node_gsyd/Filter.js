@@ -114,7 +114,7 @@ Filter.prototype.handle = function (message, cb) {
         }
         else {
             var end = new Date().getTime();
-            log.info(headNode.cmd + ":" + headNode.userId + ":" + headNode.id + ",用时:" + (end - start) + "ms");
+            log.info(headNode.cmd + ":" + headNode.userId + ":" + headNode.messageid + ",用时:" + (end - start) + "ms");
             cb(null, backMsg);
         }
     });
