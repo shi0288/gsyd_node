@@ -96,7 +96,7 @@ Filter.prototype.handle = function (message, cb) {
         headNode = msgNode.head;
     }
     catch (err) {
-        var backHeadNode = {cmd: 'E01', digestType: "MD5"};
+        var backHeadNode = {digestType: "MD5"};
         var backBodyStr = JSON.stringify(errCode.E0006);
         var backMsg = JSON.stringify({head: backHeadNode, body: backBodyStr});
         cb(null, backMsg);
@@ -108,8 +108,8 @@ Filter.prototype.handle = function (message, cb) {
             log.error('problem with request: ', err);
             var errHeadNode = {digestType: "MD5"};
             var errBodyStr = JSON.stringify(errCode.E2059);
-            var errEncodedBody = digestUtil.generate(errHeadNode, null, errBodyStr);
-            var errBackMsg = JSON.stringify({head: errHeadNode, body: errEncodedBody});
+            var errBackMsg = JSON.stringify({head: errHeadNode, body: errBodyStr});
+            console.log(errBackMsg);
             cb(null, errBackMsg);
         }
         else {

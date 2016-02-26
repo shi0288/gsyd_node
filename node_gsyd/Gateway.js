@@ -99,50 +99,36 @@ Gateway.prototype.handle = function(message, cb)
         var msgNode = JSON.parse(message);
         var headNode = msgNode.head;
         var bodyStr = msgNode.body;
-
-
-        //cmdFac.handle(headNode, bodyStr, function(err, bodyNode) {
-        //    var key = headNode.key;
-        //    if(key == undefined)
-        //    {
-        //        key = digestUtil.getEmptyKey();
-        //        if(headNode.digestType == '3des')
-        //        {
-        //            headNode.digestType = "3des-empty";
-        //        }
-        //    }
-        //    else
-        //    {
-        //        delete headNode.key;
-        //    }
-        //    if (bodyNode == undefined) {
-        //        bodyNode = {};
-        //    }
-        //    if (err) {
-        //        bodyNode.repCode = err.repCode;
-        //        bodyNode.description = err.description;
-        //    }
-        //    else
-        //    {
-        //        bodyNode.repCode = errCode.E0000.repCode;
-        //        bodyNode.description = errCode.E0000.description;
-        //    }
-        //    log.info(bodyNode);
-        //    var decodedBodyStr = digestUtil.generate(headNode, key, JSON.stringify(bodyNode));
-        //    cb({head: headNode, body: decodedBodyStr});
-        //});
-
-        var key = headNode.key;
-        var bodyNode={};
-        bodyNode.repCode = errCode.E0000.repCode;
-        bodyNode.description = errCode.E0000.description;
-        log.info(bodyNode);
-        var decodedBodyStr = digestUtil.generate(headNode, key, JSON.stringify(bodyNode));
-        cb({head: headNode, body: decodedBodyStr});
-
-
-
-
+        cmdFac.handle(headNode, bodyStr, function(err, bodyNode) {
+            var key = headNode.key;
+            if(key == undefined)
+            {
+                key = digestUtil.getEmptyKey();
+                if(headNode.digestType == '3des')
+                {
+                    headNode.digestType = "3des-empty";
+                }
+            }
+            else
+            {
+                delete headNode.key;
+            }
+            if (bodyNode == undefined) {
+                bodyNode = {};
+            }
+            if (err) {
+                bodyNode.repCode = err.repCode;
+                bodyNode.description = err.description;
+            }
+            else
+            {
+                bodyNode.repCode = errCode.E0000.repCode;
+                bodyNode.description = errCode.E0000.description;
+            }
+            log.info(bodyNode);
+            var decodedBodyStr = digestUtil.generate(headNode, key, JSON.stringify(bodyNode));
+            cb({head: headNode, body: decodedBodyStr});
+        });
     }
     catch (err)
     {
