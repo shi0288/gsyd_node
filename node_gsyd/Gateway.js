@@ -10,52 +10,47 @@ var prop = config.prop;
 var cmdFac = require("mcp_factory").cmdFac;
 var dc = require('mcp_db').dc;
 
+var moment=require("moment");
+
 var esut = require("easy_util");
 var log = esut.log;
-var digestUtil = esut.digestUtil;
 
-var Gateway = function(){
+var Gateway = function () {
     var self = this;
 };
 
 
-Gateway.prototype.start = function(){
+Gateway.prototype.start = function () {
     var self = this;
     async.waterfall([
         //connect db
-        function(cb)
-        {
-            dc.init(function(err){
+        function (cb) {
+            dc.init(function (err) {
                 cb(err);
             });
         },
         //校验基础数据的可用性
-        function(cb)
-        {
-            dc.check(function(err){
+        function (cb) {
+            dc.check(function (err) {
                 cb(err);
             });
         },
         //start web
-        function(cb)
-        {
+        function (cb) {
             self.startWeb();
             cb(null, "success");
         }
     ], function (err, result) {
-        if(err)
-        {
+        if (err) {
             console.error(err); // -> null
         }
-        else
-        {
+        else {
             console.log(result); // -> 16
         }
     });
 };
 
-Gateway.prototype.startWeb = function()
-{
+Gateway.prototype.startWeb = function () {
     var self = this;
     //是Connect內建的middleware，设置此处可以将client提交过来的post请求放入request.body中
     app.use(express.bodyParser());
@@ -63,56 +58,49 @@ Gateway.prototype.startWeb = function()
     app.use(express.methodOverride());
     //route requests
     app.use(app.router);
-    app.configure('development', function(){
+    app.configure('development', function () {
         app.use(express.errorHandler({dumpExceptions: true, showStack: true}));
     });
 
-    app.configure('production', function(){
+    app.configure('production', function () {
         app.use(express.errorHandler());
     });
 
-    app.post("/gs-filter/main/interface.htm", function(req, res){
+    app.post("/gs-filter/main/interface.htm", function (req, res) {
         var message = req.body.message;
-        self.handle(message, function(backMsgNode){
+        self.handle(message, function (backMsgNode) {
             res.json(backMsgNode);
             log.info(backMsgNode);
         });
     });
 
-    app.get("/gs-filter/main/interface.htm", function(req, res){
+    app.get("/gs-filter/main/interface.htm", function (req, res) {
         var message = req.query.message;
-        self.handle(message, function(backMsgNode){
+        self.handle(message, function (backMsgNode) {
             res.json(backMsgNode);
             log.info(backMsgNode);
         });
     });
 
-    log.info("程序在端口" + prop.gtPort + "启动.........");
+    log.info("Gateway程序在端口" + prop.gtPort + "启动.........");
     httpServer.listen(prop.gtPort);
 };
 
-Gateway.prototype.handle = function(message, cb)
-{
+Gateway.prototype.handle = function (message, cb) {
     var self = this;
     log.info(message);
     try {
         var msgNode = JSON.parse(message);
         var headNode = msgNode.head;
         var bodyStr = msgNode.body;
-        cmdFac.handle(headNode, bodyStr, function(err, bodyNode) {
-            var key = headNode.key;
-            if(key == undefined)
-            {
-                key = digestUtil.getEmptyKey();
-                if(headNode.digestType == '3des')
-                {
-                    headNode.digestType = "3des-empty";
-                }
-            }
-            else
-            {
-                delete headNode.key;
-            }
+        cmdFac.handle(headNode, bodyStr, function (err, bodyNode) {
+            var backHeadNode = {};
+            backHeadNode.messageid = headNode.messageid;
+            backHeadNode.version = headNode.version;
+            backHeadNode.userId = headNode.userId;
+            backHeadNode.userType = headNode.userType;
+            backHeadNode.cmd = headNode.cmd;
+            backHeadNode.timestamp = moment(new Date()).format("YYYYMMDDHHmmss");
             if (bodyNode == undefined) {
                 bodyNode = {};
             }
@@ -120,19 +108,16 @@ Gateway.prototype.handle = function(message, cb)
                 bodyNode.repCode = err.repCode;
                 bodyNode.description = err.description;
             }
-            else
-            {
+            else {
                 bodyNode.repCode = errCode.E0000.repCode;
                 bodyNode.description = errCode.E0000.description;
             }
-            log.info(bodyNode);
-            var decodedBodyStr = digestUtil.generate(headNode, key, JSON.stringify(bodyNode));
-            cb({head: headNode, body: decodedBodyStr});
+            var decodedBodyStr = JSON.stringify(bodyNode);
+            cb({head: backHeadNode, body: decodedBodyStr});
         });
     }
-    catch (err)
-    {
-        cb({head:{cmd:'E01'}, body:JSON.stringify(errCode.E2058)});
+    catch (err) {
+        cb({head: {digestType: "MD5"}, body: JSON.stringify(errCode.E0005)});
         return;
     }
 };

@@ -12,7 +12,6 @@ var gatewayInterUtil = util.gatewayInterUtil;
 
 var esut = require("easy_util");
 var log = esut.log;
-var digestUtil = esut.digestUtil;
 
 
 var Filter = function () {
@@ -85,7 +84,7 @@ Filter.prototype.startWeb = function () {
     });
 
     httpServer.listen(prop.filterPort);
-    log.info("filter start ----- port:" + prop.filterPort);
+    log.info("Filter程序在端口" + prop.filterPort + "启动.........");
 };
 
 Filter.prototype.handle = function (message, cb) {
@@ -97,27 +96,74 @@ Filter.prototype.handle = function (message, cb) {
     }
     catch (err) {
         var backHeadNode = {digestType: "MD5"};
-        var backBodyStr = JSON.stringify(errCode.E0006);
+        var backBodyStr = JSON.stringify(errCode.E0005);
         var backMsg = JSON.stringify({head: backHeadNode, body: backBodyStr});
         cb(null, backMsg);
         return;
     }
-    var start = new Date().getTime();
-    gatewayInterUtil.get(message, function (err, backMsg) {
-        if (err) {
-            log.error('problem with request: ', err);
+
+    self.checkHeadNode(headNode,function(err){
+        if(err){
             var errHeadNode = {digestType: "MD5"};
-            var errBodyStr = JSON.stringify(errCode.E2059);
+            var errBodyStr = JSON.stringify(errCode.E2030);
             var errBackMsg = JSON.stringify({head: errHeadNode, body: errBodyStr});
             console.log(errBackMsg);
             cb(null, errBackMsg);
-        }
-        else {
-            var end = new Date().getTime();
-            log.info(headNode.cmd + ":" + headNode.userId + ":" + headNode.messageid + ",用时:" + (end - start) + "ms");
-            cb(null, backMsg);
+        }else{
+            var start = new Date().getTime();
+            gatewayInterUtil.get(message, function (err, backMsg) {
+                if (err) {
+                    log.error('problem with request: ', err);
+                    var errHeadNode = {digestType: "MD5"};
+                    var errBodyStr = JSON.stringify(errCode.E2000);
+                    var errBackMsg = JSON.stringify({head: errHeadNode, body: errBodyStr});
+                    console.log(errBackMsg);
+                    cb(null, errBackMsg);
+                }
+                else {
+                    var end = new Date().getTime();
+                    log.info(headNode.cmd + ":" + headNode.userId + ":" + headNode.messageid + ",用时:" + (end - start) + "ms");
+                    cb(null, backMsg);
+                }
+            });
         }
     });
+};
+
+Filter.prototype.checkHeadNode = function (headNode, cb) {
+    if (!headNode.version) {
+        cb(true);
+        return;
+    }
+    if (!headNode.messageid) {
+        cb(true);
+        return;
+    }
+    if (!headNode.userId) {
+        cb(true);
+        return;
+    }
+    if (!headNode.userType) {
+        cb(true);
+        return;
+    }
+    if (!headNode.digest) {
+        cb(true);
+        return;
+    }
+    if (!headNode.digestType) {
+        cb(true);
+        return;
+    }
+    if (!headNode.cmd) {
+        cb(true);
+        return;
+    }
+    if (!headNode.timestamp) {
+        cb(true);
+        return;
+    }
+    cb(null);
 };
 
 var f = new Filter();
