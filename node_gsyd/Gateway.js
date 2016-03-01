@@ -70,7 +70,7 @@ Gateway.prototype.startWeb = function () {
         var message = req.body.message;
         self.handle(message, function (backMsgNode) {
             res.json(backMsgNode);
-            log.info(backMsgNode);
+          //  log.info(backMsgNode);
         });
     });
 
@@ -78,7 +78,7 @@ Gateway.prototype.startWeb = function () {
         var message = req.query.message;
         self.handle(message, function (backMsgNode) {
             res.json(backMsgNode);
-            log.info(backMsgNode);
+          //  log.info(backMsgNode);
         });
     });
 
@@ -88,7 +88,6 @@ Gateway.prototype.startWeb = function () {
 
 Gateway.prototype.handle = function (message, cb) {
     var self = this;
-    log.info(message);
     try {
         var msgNode = JSON.parse(message);
         var headNode = msgNode.head;
@@ -98,7 +97,6 @@ Gateway.prototype.handle = function (message, cb) {
             backHeadNode.messageid = headNode.messageid;
             backHeadNode.version = headNode.version;
             backHeadNode.userId = headNode.userId;
-            backHeadNode.userType = headNode.userType;
             backHeadNode.cmd = headNode.cmd;
             backHeadNode.timestamp = moment(new Date()).format("YYYYMMDDHHmmss");
             if (bodyNode == undefined) {
