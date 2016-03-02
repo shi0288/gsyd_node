@@ -42,10 +42,10 @@ Gateway.prototype.start = function () {
         }
     ], function (err, result) {
         if (err) {
-            console.error(err); // -> null
+            log.error(err); // -> null
         }
         else {
-            console.log(result); // -> 16
+            log.info(result); // -> 16
         }
     });
 };
