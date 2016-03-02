@@ -76,7 +76,6 @@ Filter.prototype.startWeb = function () {
             }
         });
     });
-
     app.post("/main/notify.htm", function (req, res) {
         var message = req.body.message;
         log.info(message);

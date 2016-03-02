@@ -70,7 +70,7 @@ Gateway.prototype.startWeb = function () {
         var message = req.body.message;
         self.handle(message, function (backMsgNode) {
             res.json(backMsgNode);
-          //  log.info(backMsgNode);
+            log.info(backMsgNode);
         });
     });
 
@@ -78,7 +78,7 @@ Gateway.prototype.startWeb = function () {
         var message = req.query.message;
         self.handle(message, function (backMsgNode) {
             res.json(backMsgNode);
-          //  log.info(backMsgNode);
+            log.info(backMsgNode);
         });
     });
 
