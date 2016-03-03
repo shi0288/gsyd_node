@@ -5,12 +5,7 @@
 
 var moment = require('moment');
 var MongoClient = require('mongodb').MongoClient;
+var esut = require('easy_util');
+var digestUtil = esut.digestUtil;
 
-
-MongoClient.connect('mongodb://192.168.0.131:27017/node_gsyd', function(err, db) {
-    if (err) throw err;
-    var collection = db.collection("test_insert");
-    console.log(collection,[]);
-
-
-});
+console.log(digestUtil.createUUID());
