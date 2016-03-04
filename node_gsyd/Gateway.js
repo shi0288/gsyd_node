@@ -103,6 +103,7 @@ Gateway.prototype.handle = function (message, cb) {
                 bodyNode = {};
             }
             if (err) {
+                bodyNode = {};
                 bodyNode.repCode = err.repCode;
                 bodyNode.description = err.description;
             }
