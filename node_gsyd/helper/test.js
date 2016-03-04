@@ -4,6 +4,9 @@
 'use strict';
 
 var async = require('async');
+var util=require('easy_util');
+var digestUtil=util.digestUtil;
+
 //
 //async.waterfall([
 //    function(cb){
@@ -21,16 +24,7 @@ var async = require('async');
 //],function(err){
 //   console.log('结束');
 //});
-
-
-var cond={};
-cond.ss=1;
-cond.ff=2;
-console.log(cond.size);
-
-
-
-
+console.log(digestUtil.sha1('guoshangyidai189'));
 
 
 
