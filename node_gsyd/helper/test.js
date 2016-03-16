@@ -3,9 +3,31 @@
  */
 'use strict';
 
-var async = require('async');
-var util=require('easy_util');
-var digestUtil=util.digestUtil;
+//var async = require('async');
+//var util=require('easy_util');
+//var digestUtil=util.digestUtil;
+//var dateUtil=util.dateUtil;
+//
+//
+//var ll=new Date();
+//var a = 0, b = 1;
+//for (var i = 0; i < 999999999; i++) {
+//    var c = a + b;
+//    a = b;
+//    b = c;
+//}
+//console.log(new Date()-ll);
+
+//alert(45.6*13);
+//alert(0.7+0.1);//输出0.7999999999999999
+//alert(0.6+0.2);//输出0.8
+
+var arithUtil=require('easy_util').arithUtil;
+
+console.log(arithUtil.add(0.1,0.7));
+console.log(arithUtil.add(0.6,0.2));
+console.log(arithUtil.mul(45.6,13));
+
 
 //
 //async.waterfall([
@@ -24,8 +46,9 @@ var digestUtil=util.digestUtil;
 //],function(err){
 //   console.log('结束');
 //});
-console.log(digestUtil.sha1('guoshangyidai189'));
-
+//console.log(digestUtil.sha1('guoshangyidai189'));
+//
+//console.log(dateUtil.toCurrentDate()*100000+1);
 
 
 //dc.init(function (err) {
@@ -86,5 +109,6 @@ console.log(digestUtil.sha1('guoshangyidai189'));
 //    //        console.log(backBodyNode);
 //    //    });
 //    //});
+
 
 

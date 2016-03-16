@@ -10,7 +10,10 @@ var prop = config.prop;
 var cmdFac = require("mcp_factory").cmdFac;
 var dc = require('mcp_db').dc;
 
-var moment=require("moment");
+var moment = require("moment");
+
+var source = require("mcp_source");
+var mqSource=source.mqSource;
 
 var esut = require("easy_util");
 var log = esut.log;
@@ -23,7 +26,12 @@ var Gateway = function () {
 Gateway.prototype.start = function () {
     var self = this;
     async.waterfall([
-        //connect db
+        //connect mq
+        function (cb) {
+            mqSource.init(function (err) {
+                cb(err);
+            });
+        },
         function (cb) {
             dc.init(function (err) {
                 cb(err);
@@ -116,6 +124,7 @@ Gateway.prototype.handle = function (message, cb) {
         });
     }
     catch (err) {
+        log.error(err);
         cb({head: {digestType: "MD5"}, body: JSON.stringify(errCode.E0005)});
         return;
     }
