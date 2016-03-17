@@ -11,9 +11,11 @@ var mqSource = source.mqSource;
 var cons = require('mcp_constants');
 var loanStatus = cons.loanStatus;
 var investStatus = cons.investStatus;
+var userBillCons = cons.userBillCons;
 
 var service = require('mcp_service');
 var loanSer = service.loanService;
+var userBillSer = service.userBillService;
 
 var esut = require('easy_util');
 var log = esut.log;
@@ -86,17 +88,17 @@ async.waterfall([
                         } else {
                             //查询已投的金额
                             loanSer.getRemainMoney(loan.id, function (err, remainMoney) {
-                                if(err){
+                                if (err) {
                                     cb(err);
-                                }else{
+                                } else {
                                     var investMoney = invest.money;
                                     var loanMoney = loan.money;
                                     if (investMoney >= arithUtil.sub(loanMoney - remainMoney)) {
                                         //投资有效则继续
-                                        if(arithUtil.add(investMoney,remainMoney)==loanMoney){
-                                            cb(null, loan, invest,true);
-                                        }else{
-                                            cb(null, loan, invest,false);
+                                        if (arithUtil.add(investMoney, remainMoney) == loanMoney) {
+                                            cb(null, loan, invest, true);
+                                        } else {
+                                            cb(null, loan, invest, false);
                                         }
                                     } else {
                                         //如果已经投资金额过大，则跳出
@@ -106,31 +108,36 @@ async.waterfall([
                             });
                         }
                     },
-                    //更新投资记录状态
-                    function (loan, invest,all, cb) {
+                    //更新投资记录状态  all指项目是否已经被投资完
+                    function (loan, invest, all, cb) {
                         var investTab = dc.main.get('invest');
-                        investTab.update({id: invest.id}, {$set: {status:investStatus.bid_success}}, [], function (err) {
+                        investTab.update({id: invest.id}, {$set: {status: investStatus.bid_success}}, [], function (err) {
                             if (err) {
                                 cb(err);
                             } else {
                                 //判断项目是否满额
-                                if(all){
+                                if (all) {
                                     //满额则更新项目状态
                                     var loanTab = dc.main.get('loan');
-                                    loanTab.update({id: loan.id}, {$set: {status:loanStatus.complete}}, [], function (err) {
-                                        cb(err,invest);
+                                    loanTab.update({id: loan.id}, {$set: {status: loanStatus.complete}}, [], function (err) {
+                                        cb(err, invest);
                                     })
-                                }else{
+                                } else {
                                     //继续
-                                    cb(err,invest);
+                                    cb(err, invest);
                                 }
                             }
                         });
                     },
                     //冻结投资金额
-                    function(invest,cb){
-
-
+                    function (invest, cb) {
+                        userBillSer.freezeMoney(invest.user_id,
+                            invest.money,
+                            userBillCons.operatorInfo.INVEST_SUCCESS,
+                            "投资成功：冻结金额。借款ID:"+invest.loan_id+"  投资ID:"+invest.id,
+                            function (err, data) {
+                            cb(null);
+                        });
                     }
                 ], function (err) {
                     if (err) {

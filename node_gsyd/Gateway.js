@@ -28,7 +28,7 @@ Gateway.prototype.start = function () {
     async.waterfall([
         //connect mq
         function (cb) {
-            mqSource.init(function (err) {
+            mqSource.init(prop.mq,function (err) {
                 cb(err);
             });
         },

@@ -22,11 +22,15 @@
 //alert(0.7+0.1);//输出0.7999999999999999
 //alert(0.6+0.2);//输出0.8
 
-var arithUtil=require('easy_util').arithUtil;
+//var arithUtil=require('easy_util').arithUtil;
+//
+//console.log(arithUtil.add(0.1,0.7));
+//console.log(arithUtil.add(0.6,0.2));
+//console.log(arithUtil.mul(45.6,13));
 
-console.log(arithUtil.add(0.1,0.7));
-console.log(arithUtil.add(0.6,0.2));
-console.log(arithUtil.mul(45.6,13));
+
+var sql="select *sdfasdfsdafasd,0 from lltalb";
+console.log('select count(*) from '+sql.split('from')[1]);
 
 
 //
