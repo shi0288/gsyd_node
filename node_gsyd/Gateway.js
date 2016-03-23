@@ -100,6 +100,7 @@ Gateway.prototype.handle = function (message, cb) {
         var msgNode = JSON.parse(message);
         var headNode = msgNode.head;
         var bodyStr = msgNode.body;
+        log.info("req:"+message);
         cmdFac.handle(headNode, bodyStr, function (err, bodyNode) {
             var backHeadNode = {};
             backHeadNode.messageid = headNode.messageid;
