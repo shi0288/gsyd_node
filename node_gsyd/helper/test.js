@@ -28,37 +28,50 @@
 //console.log(arithUtil.add(0.6,0.2));
 //console.log(arithUtil.mul(45.6,13));
 
-
-var async = require('async');
-
-var objs = [{name:'A'}, {name:'B'}, {name:'C'}];
-
-function doSomething(obj, cb)
-{
-    console.log("我在做" + obj.name + "这件事!");
-    cb("dd", obj);
-}
-
-//async.each(objs, function(obj, callback) {
-//    doSomething(obj, function(){
-//        callback();
+//
+//var async = require('async');
+//
+//var objs = [{name:'A'}, {name:'B'}, {name:'C'}];
+//
+//function doSomething(obj, cb)
+//{
+//    console.log("我在做" + obj.name + "这件事!");
+//    cb("dd", obj);
+//}
+//
+////async.each(objs, function(obj, callback) {
+////    doSomething(obj, function(){
+////        callback();
+////    });
+////}, function(err){
+////    console.log("err is:" + err);
+////});
+//
+//async.eachSeries(objs, function(obj, callback) {
+//    doSomething(obj, function(err){
+//        if(obj.name=='B'){
+//            callback(err);
+//        }else{
+//            callback(null);
+//        }
+//
 //    });
 //}, function(err){
 //    console.log("err is:" + err);
 //});
 
-async.eachSeries(objs, function(obj, callback) {
-    doSomething(obj, function(err){
-        if(obj.name=='B'){
-            callback(err);
-        }else{
-            callback(null);
-        }
 
-    });
-}, function(err){
-    console.log("err is:" + err);
-});
+var temp=new Array();
+temp.push(1);
+temp.push(2);
+temp.push(13);
+temp.push(4);
+
+console.log(temp.length);
+console.log(temp[2]);
+delete temp[2];
+console.log(temp[2]);
+
 
 
 //
