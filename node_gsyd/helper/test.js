@@ -29,8 +29,36 @@
 //console.log(arithUtil.mul(45.6,13));
 
 
-var sql="select *sdfasdfsdafasd,0 from lltalb";
-console.log('select count(*) from '+sql.split('from')[1]);
+var async = require('async');
+
+var objs = [{name:'A'}, {name:'B'}, {name:'C'}];
+
+function doSomething(obj, cb)
+{
+    console.log("我在做" + obj.name + "这件事!");
+    cb("dd", obj);
+}
+
+//async.each(objs, function(obj, callback) {
+//    doSomething(obj, function(){
+//        callback();
+//    });
+//}, function(err){
+//    console.log("err is:" + err);
+//});
+
+async.eachSeries(objs, function(obj, callback) {
+    doSomething(obj, function(err){
+        if(obj.name=='B'){
+            callback(err);
+        }else{
+            callback(null);
+        }
+
+    });
+}, function(err){
+    console.log("err is:" + err);
+});
 
 
 //

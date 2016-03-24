@@ -76,17 +76,11 @@ Gateway.prototype.startWeb = function () {
 
     app.post("/gs-filter/main/interface.htm", function (req, res) {
         var message = req.body.message;
+        var start = new Date().getTime();
         self.handle(message, function (backMsgNode) {
             res.json(backMsgNode);
-            log.info(backMsgNode);
-        });
-    });
-
-    app.get("/gs-filter/main/interface.htm", function (req, res) {
-        var message = req.query.message;
-        self.handle(message, function (backMsgNode) {
-            res.json(backMsgNode);
-            log.info(backMsgNode);
+            var end = new Date().getTime();
+            log.info("用时:" + (end - start) + "ms");
         });
     });
 
@@ -100,7 +94,6 @@ Gateway.prototype.handle = function (message, cb) {
         var msgNode = JSON.parse(message);
         var headNode = msgNode.head;
         var bodyStr = msgNode.body;
-        log.info("req:"+message);
         cmdFac.handle(headNode, bodyStr, function (err, bodyNode) {
             var backHeadNode = {};
             backHeadNode.messageid = headNode.messageid;

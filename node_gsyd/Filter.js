@@ -51,8 +51,10 @@ Filter.prototype.startWeb = function () {
     app.configure('production', function () {
         app.use(express.errorHandler());
     });
+
     app.post("/gs-filter/main/interface.htm", function (req, res) {
         var message = req.body.message;
+        var start = new Date().getTime();
         self.handle(message, function (err, backMsg) {
             try {
                 res.type('application/json;charset=utf-8');
@@ -61,6 +63,8 @@ Filter.prototype.startWeb = function () {
             catch (err) {
                 log.info(err);
             }
+            var end = new Date().getTime();
+            log.info("用时:" + (end - start) + "ms");
         });
     });
 
@@ -109,7 +113,6 @@ Filter.prototype.handle = function (message, cb) {
             console.log(errBackMsg);
             cb(null, errBackMsg);
         }else{
-            var start = new Date().getTime();
             gatewayInterUtil.get(message, function (err, backMsg) {
                 if (err) {
                     log.error('problem with request: ', err);
@@ -120,8 +123,6 @@ Filter.prototype.handle = function (message, cb) {
                     cb(null, errBackMsg);
                 }
                 else {
-                    var end = new Date().getTime();
-                    log.info(headNode.cmd + ":" + headNode.userId + ":" + headNode.messageid + ",用时:" + (end - start) + "ms");
                     cb(null, backMsg);
                 }
             });
