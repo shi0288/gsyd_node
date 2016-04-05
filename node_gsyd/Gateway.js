@@ -90,6 +90,7 @@ Gateway.prototype.startWeb = function () {
 
 Gateway.prototype.handle = function (message, cb) {
     var self = this;
+    log.info("收到的："+message);
     try {
         var msgNode = JSON.parse(message);
         var headNode = msgNode.head;
@@ -114,6 +115,7 @@ Gateway.prototype.handle = function (message, cb) {
                 bodyNode.description = errCode.E0000.description;
             }
             var decodedBodyStr = JSON.stringify(bodyNode);
+            log.error(bodyNode);
             cb({head: backHeadNode, body: decodedBodyStr});
         });
     }
