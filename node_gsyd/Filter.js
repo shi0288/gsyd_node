@@ -110,7 +110,6 @@ Filter.prototype.handle = function (message, cb) {
             var errHeadNode = {digestType: "MD5"};
             var errBodyStr = JSON.stringify(errCode.E2030);
             var errBackMsg = JSON.stringify({head: errHeadNode, body: errBodyStr});
-            console.log(errBackMsg);
             cb(null, errBackMsg);
         }else{
             gatewayInterUtil.get(message, function (err, backMsg) {
@@ -119,7 +118,6 @@ Filter.prototype.handle = function (message, cb) {
                     var errHeadNode = {digestType: "MD5"};
                     var errBodyStr = JSON.stringify(errCode.E2000);
                     var errBackMsg = JSON.stringify({head: errHeadNode, body: errBodyStr});
-                    console.log(errBackMsg);
                     cb(null, errBackMsg);
                 }
                 else {
