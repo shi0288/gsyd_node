@@ -1,0 +1,10 @@
+js-bson: Failed to load c++ bson extension, using pure JS version
+[32m[2016-04-11 19:05:00.827] [INFO] logger - [39m-----数据库初始化完成
+[32m[2016-04-11 19:05:00.853] [INFO] logger - [39m-----MongoDB初始化完成
+[32m[2016-04-11 19:05:00.854] [INFO] logger - [39m定时任务处理已启动
+[32m[2016-04-11 19:05:00.855] [INFO] logger - [39msuccess
+js-bson: Failed to load c++ bson extension, using pure JS version
+[32m[2016-04-11 19:05:57.231] [INFO] logger - [39m-----数据库初始化完成
+[32m[2016-04-11 19:05:57.316] [INFO] logger - [39m-----MongoDB初始化完成
+[32m[2016-04-11 19:05:57.321] [INFO] logger - [39m定时任务处理已启动
+[32m[2016-04-11 19:05:57.322] [INFO] logger - [39msuccess

@@ -12,6 +12,7 @@ OPT=$1
 PROCESSID=$2
 filterValue=`ps -ef|grep Filter.js|grep -v grep|awk '{print $2}'`
 gatewayValue=`ps -ef|grep Gateway.js|grep -v grep|awk '{print $2}'`
+runTimesValue=`ps -ef|grep RunTimes.js|grep -v grep|awk '{print $2}'`
 if [ $# -eq 0 ]; then
         usage
         exit 1
@@ -27,7 +28,11 @@ case $OPT in
              nohup node Gateway.js target=$PROCESSID gtPort=9091 mq=backWay_2> /data/mcplog/gateway9091.log 2>&1 &
              echo "Start Gateway.js success"
          fi
-         if [ ${#filterValue} -ne 0 -a ${#adminValue} -ne 0 -a ${#gatewayValue} -ne 0 ]; then
+         if [ ${#runTimesValue} -eq 0 ]; then
+             nohup node RunTimes.js target=$PROCESSID >/data/mcplog/runTimes.log 2>&1 &
+             echo "Start RunTimes.js success"
+         fi
+         if [ ${#filterValue} -ne 0 -a ${#runTimesValue} -ne 0 -a ${#gatewayValue} -ne 0 ]; then
             echo "No bootable projects"
          fi
 
@@ -41,6 +46,10 @@ case $OPT in
                   kill -9  `ps -ef|grep Gateway.js|grep -v grep|awk '{print $2}'`
                   echo "Stop Gateway.js success"
                fi
+               if [ ${#runTimesValue} -ne 0 ];  then
+                  kill -9  `ps -ef|grep RunTimes.js|grep -v grep|awk '{print $2}'`
+                  echo "Stop RunTimes.js success"
+               fi
         ;;
         restart|ReStart) echo "ReStarting.....$PROCESSID"
                if [ ${#filterValue} -ne 0 ];  then
@@ -53,6 +62,10 @@ case $OPT in
                nohup node Gateway.js target=$PROCESSID gtPort=9090 mq=backWay_1> /data/mcplog/gateway9090.log 2>&1 &
                nohup node Gateway.js target=$PROCESSID gtPort=9091 mq=backWay_2> /data/mcplog/gateway9091.log 2>&1 &
 
+               if [ ${#runTimesValue} -ne 0 ];  then
+                   kill -9  `ps -ef|grep RunTimes.js|grep -v grep|awk '{print $2}'`
+               fi
+               nohup node RunTimes.js target=$PROCESSID > /data/mcplog/runTimes.log 2>&1 &
                echo "ReStart success........"
         ;;
         *)usage
