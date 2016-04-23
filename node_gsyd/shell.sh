@@ -13,6 +13,7 @@ PROCESSID=$2
 filterValue=`ps -ef|grep Filter.js|grep -v grep|awk '{print $2}'`
 gatewayValue=`ps -ef|grep Gateway.js|grep -v grep|awk '{print $2}'`
 runTimesValue=`ps -ef|grep RunTimes.js|grep -v grep|awk '{print $2}'`
+investTaskValue=`ps -ef|grep InvestTask.js|grep -v grep|awk '{print $2}'`
 if [ $# -eq 0 ]; then
         usage
         exit 1
@@ -32,7 +33,11 @@ case $OPT in
              nohup node RunTimes.js target=$PROCESSID >/data/mcplog/runTimes.log 2>&1 &
              echo "Start RunTimes.js success"
          fi
-         if [ ${#filterValue} -ne 0 -a ${#runTimesValue} -ne 0 -a ${#gatewayValue} -ne 0 ]; then
+         if [ ${#investTaskValue} -eq 0 ]; then
+             nohup node InvestTask.js target=$PROCESSID >/data/mcplog/investTask.log 2>&1 &
+             echo "Start InvestTask.js success"
+         fi
+         if [ ${#filterValue} -ne 0 -a ${#runTimesValue} -ne 0 -a ${#gatewayValue} -ne 0 -a ${#investTaskValue} -ne 0]; then
             echo "No bootable projects"
          fi
 
@@ -50,6 +55,10 @@ case $OPT in
                   kill -9  `ps -ef|grep RunTimes.js|grep -v grep|awk '{print $2}'`
                   echo "Stop RunTimes.js success"
                fi
+               if [ ${#investTaskValue} -ne 0 ];  then
+                  kill -9  `ps -ef|grep InvestTask.js|grep -v grep|awk '{print $2}'`
+                  echo "Stop InvestTask.js success"
+               fi
         ;;
         restart|ReStart) echo "ReStarting.....$PROCESSID"
                if [ ${#filterValue} -ne 0 ];  then
@@ -66,6 +75,12 @@ case $OPT in
                    kill -9  `ps -ef|grep RunTimes.js|grep -v grep|awk '{print $2}'`
                fi
                nohup node RunTimes.js target=$PROCESSID > /data/mcplog/runTimes.log 2>&1 &
+
+               if [ ${#investTaskValue} -ne 0 ];  then
+                   kill -9  `ps -ef|grep InvestTask.js|grep -v grep|awk '{print $2}'`
+               fi
+               nohup node InvestTask.js target=$PROCESSID >/data/mcplog/investTask.log 2>&1 &
+
                echo "ReStart success........"
         ;;
         *)usage
