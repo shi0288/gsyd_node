@@ -37,7 +37,7 @@ case $OPT in
              nohup node InvestTask.js target=$PROCESSID >/data/mcplog/investTask.log 2>&1 &
              echo "Start InvestTask.js success"
          fi
-         if [ ${#filterValue} -ne 0 -a ${#runTimesValue} -ne 0 -a ${#gatewayValue} -ne 0 -a ${#investTaskValue} -ne 0]; then
+        if [ ${#filterValue} -ne 0 -a ${#runTimesValue} -ne 0 -a ${#gatewayValue} -ne 0 -a ${#investTaskValue} -ne 0 ]; then
             echo "No bootable projects"
          fi
 
