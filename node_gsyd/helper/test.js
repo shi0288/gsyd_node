@@ -3,10 +3,14 @@
  */
 'use strict';
 
-//var async = require('async');
-//var util=require('easy_util');
-//var digestUtil=util.digestUtil;
-//var dateUtil=util.dateUtil;
+var async = require('async');
+var util = require('easy_util');
+var digestUtil = util.digestUtil;
+var dateUtil = util.dateUtil;
+
+
+var util = require('mcp_util');
+var dateMathUtil = util.dateMathUtil;
 //
 //
 //var ll=new Date();
@@ -61,17 +65,54 @@
 //});
 
 
-var temp=new Array();
-temp.push(1);
-temp.push(2);
-temp.push(13);
-temp.push(4);
+//var temp=new Array();
+//temp.push(1);
+//temp.push(2);
+//temp.push(13);
+//temp.push(4);
+//
+//console.log(temp.length);
+//console.log(temp[2]);
+//delete temp[2];
+//console.log(temp[2]);
 
-console.log(temp.length);
-console.log(temp[2]);
-delete temp[2];
-console.log(temp[2]);
+//var days = dateMathUtil.daysBetween(dateUtil.getCurTime(true), '2016-04-02');
+//console.log(days);
+//
+//var arr = new Array(5);
+//var i=0;
+//arr[0]={aaa:333};
+//async.eachSeries(arr, function (obj,repayCall) {
+//    arr[i]={
+//        id:i
+//    };
+//        i++;
+//    console.log(obj);
+//    repayCall();
+//}, function (err) {
+//  console.log('ok');
+//});
+//console.log(arr);
 
+var investMoney=10000*100;
+var tempDeadline=10;
+var rate=0.14;
+var sumCorpusCurrent=0;
+for(var i=0;i<tempDeadline;i++){
+    var everyMonthRepayMoney = Math.round((investMoney * (rate / 12) * Math.pow(
+            (1 + rate / 12), tempDeadline))
+        / (Math.pow((1 + rate / 12), tempDeadline) - 1), 2);
+    //每月利息
+    var interestCurrent = Math
+        .round((investMoney * (rate / 12) - everyMonthRepayMoney) * Math.pow((1 + (rate / 12)), i) + everyMonthRepayMoney);
+
+    var corpusCurrent = everyMonthRepayMoney-interestCurrent;
+    sumCorpusCurrent+=corpusCurrent;
+    if (i+1 == tempDeadline) {
+        corpusCurrent= corpusCurrent+(investMoney-sumCorpusCurrent);
+    }
+    console.log("本息："+everyMonthRepayMoney/100 +"  本金:"+corpusCurrent/100+"  利息:"+interestCurrent/100);
+}
 
 
 //

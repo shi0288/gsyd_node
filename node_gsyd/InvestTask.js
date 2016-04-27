@@ -13,13 +13,14 @@ var loanStatus = cons.loanStatus;
 var investStatus = cons.investStatus;
 var userBillCons = cons.userBillCons;
 
+var config = require("mcp_config");
+var prop = config.prop;
+
 var service = require('mcp_service');
-var loanSer = service.loanService;
 var userBillSer = service.userBillService;
 
 var esut = require('easy_util');
 var log = esut.log;
-var arithUtil = esut.arithUtil;
 
 var async = require('async');
 
@@ -27,7 +28,7 @@ var q = 'server';
 async.waterfall([
     //connect mq
     function (cb) {
-        mqSource.init(function (err) {
+        mqSource.init(q,function (err) {
             cb(err);
         });
     },
@@ -67,7 +68,7 @@ async.waterfall([
                     //判断投资记录状态是否可投
                     function (invest, cb) {
                         log.info('判断投资记录状态是否可投');
-                        if (invest.status == investStatus.cancel) {
+                        if (invest.status == investStatus.init) {
                             cb(null, invest);
                         } else {
                             //如果已经处理,则跳出不再继续
@@ -76,7 +77,7 @@ async.waterfall([
                     },
                     //查询当前投资项目信息
                     function (invest, cb) {
-                        log.info('判断投资记录状态是否可投');
+                        log.info('查询当前投资项目信息');
                         var loan_id = invest.loan_id;
                         var loanTab = dc.main.get('loan');
                         loanTab.findOne({id: loan_id}, {}, [], function (err, loan) {
@@ -90,25 +91,20 @@ async.waterfall([
                             cb(true);
                         } else {
                             //查询已投的金额
-                            loanSer.getRemainMoney(loan.id, function (err, remainMoney) {
-                                if (err) {
-                                    cb(err);
+                            var investMoney = invest.money;
+                            var loanMoney = loan.money;
+                            var hadMoney = loan.loan_money;
+                            if (investMoney <= loanMoney - hadMoney) {
+                                //投资有效则继续
+                                if (investMoney + hadMoney == loanMoney) {
+                                    cb(null, loan, invest, true);
                                 } else {
-                                    var investMoney = invest.money;
-                                    var loanMoney = loan.money;
-                                    if (investMoney >= arithUtil.sub(loanMoney - remainMoney)) {
-                                        //投资有效则继续
-                                        if (arithUtil.add(investMoney, remainMoney) == loanMoney) {
-                                            cb(null, loan, invest, true);
-                                        } else {
-                                            cb(null, loan, invest, false);
-                                        }
-                                    } else {
-                                        //如果已经投资金额过大，则跳出
-                                        cb(true);
-                                    }
+                                    cb(null, loan, invest, false);
                                 }
-                            });
+                            } else {
+                                //如果已经投资金额过大，则跳出
+                                cb(true);
+                            }
                         }
                     },
                     //更新投资记录状态  all指项目是否已经被投资完
@@ -122,25 +118,33 @@ async.waterfall([
                                 if (all) {
                                     //满额则更新项目状态
                                     var loanTab = dc.main.get('loan');
-                                    loanTab.update({id: loan.id}, {$set: {status: loanStatus.complete}}, [], function (err) {
+                                    loanTab.update({id: loan.id}, {
+                                        $set: {
+                                            status: loanStatus.recheck,
+                                            loan_money: loan.money
+                                        }
+                                    }, [], function (err) {
                                         cb(err, invest);
                                     })
                                 } else {
                                     //继续
-                                    cb(err, invest);
+                                    var loanTab = dc.main.get('loan');
+                                    loanTab.update({id: loan.id}, {$set: {loan_money: loan.loan_money + invest.money}}, [], function (err) {
+                                        cb(err, invest);
+                                    });
                                 }
                             }
                         });
                     },
                     //冻结投资金额
                     function (invest, cb) {
-                        userBillSer.freezeMoney(invest.user_id,
+                        userBillSer.frozenMoney(invest.user_id,
                             invest.money,
-                            userBillCons.operatorInfo.INVEST_SUCCESS,
-                            "投资成功：冻结金额。借款ID:"+invest.loan_id+"  投资ID:"+invest.id,
+                            userBillCons.payType.INVEST,
+                            "投资成功：冻结金额。借款ID:" + invest.loan_id + "  投资ID:" + invest.id,
                             function (err, data) {
-                            cb(null);
-                        });
+                                cb(null);
+                            });
                     }
                 ], function (err) {
                     if (err) {
