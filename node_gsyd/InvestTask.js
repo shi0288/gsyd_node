@@ -13,9 +13,6 @@ var loanStatus = cons.loanStatus;
 var investStatus = cons.investStatus;
 var userBillCons = cons.userBillCons;
 
-var config = require("mcp_config");
-var prop = config.prop;
-
 var service = require('mcp_service');
 var userBillSer = service.userBillService;
 
