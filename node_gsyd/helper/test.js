@@ -5,16 +5,25 @@
 
 var async = require('async');
 var util = require('easy_util');
+var moment = require('moment');
 var digestUtil = util.digestUtil;
 var dateUtil = util.dateUtil;
 
+var util = require('mcp_util');
+var dateMathUtil = util.dateMathUtil;
+
+console.log(dateMathUtil.daysBetween(dateMathUtil.dateMonthAdd('2016-08-30', 31,-4+1),dateMathUtil.dateMonthAdd('2016-08-30', 2,-4+0)));
 
 
-var sql = "SELECT loan.name,invest.create_time,invest.money," +
-    "(select sum(invest_repay.money)+sum(invest_repay.interest)+sum(invest_repay.st_interest) " +
-    "from  invest_repay where invest_repay.status=0 and invest.id=invest_repay.invest_id)   as sumWaitMoney  " +
-    "from invest LEFT JOIN loan  on invest.loan_id=loan.id where invest.status=1200 and (loan.status=1400 or loan.status=1500 or loan.status=1600)  and invest.user_id='" + "q001" + "'";
-console.log(sql);
+
+
+
+//
+//var sql = "SELECT loan.name,invest.create_time,invest.money," +
+//    "(select sum(invest_repay.money)+sum(invest_repay.interest)+sum(invest_repay.st_interest) " +
+//    "from  invest_repay where invest_repay.status=0 and invest.id=invest_repay.invest_id)   as sumWaitMoney  " +
+//    "from invest LEFT JOIN loan  on invest.loan_id=loan.id where invest.status=1200 and (loan.status=1400 or loan.status=1500 or loan.status=1600)  and invest.user_id='" + "q001" + "'";
+//console.log(sql);
 
 
 
@@ -101,25 +110,25 @@ console.log(sql);
 //});
 //console.log(arr);
 
-var investMoney=10000*100;
-var tempDeadline=10;
-var rate=0.14;
-var sumCorpusCurrent=0;
-for(var i=0;i<tempDeadline;i++){
-    var everyMonthRepayMoney = Math.round((investMoney * (rate / 12) * Math.pow(
-            (1 + rate / 12), tempDeadline))
-        / (Math.pow((1 + rate / 12), tempDeadline) - 1), 2);
-    //每月利息
-    var interestCurrent = Math
-        .round((investMoney * (rate / 12) - everyMonthRepayMoney) * Math.pow((1 + (rate / 12)), i) + everyMonthRepayMoney);
-
-    var corpusCurrent = everyMonthRepayMoney-interestCurrent;
-    sumCorpusCurrent+=corpusCurrent;
-    if (i+1 == tempDeadline) {
-        corpusCurrent= corpusCurrent+(investMoney-sumCorpusCurrent);
-    }
-    console.log("本息："+everyMonthRepayMoney/100 +"  本金:"+corpusCurrent/100+"  利息:"+interestCurrent/100);
-}
+//var investMoney=10000*100;
+//var tempDeadline=10;
+//var rate=0.14;
+//var sumCorpusCurrent=0;
+//for(var i=0;i<tempDeadline;i++){
+//    var everyMonthRepayMoney = Math.round((investMoney * (rate / 12) * Math.pow(
+//            (1 + rate / 12), tempDeadline))
+//        / (Math.pow((1 + rate / 12), tempDeadline) - 1), 2);
+//    //每月利息
+//    var interestCurrent = Math
+//        .round((investMoney * (rate / 12) - everyMonthRepayMoney) * Math.pow((1 + (rate / 12)), i) + everyMonthRepayMoney);
+//
+//    var corpusCurrent = everyMonthRepayMoney-interestCurrent;
+//    sumCorpusCurrent+=corpusCurrent;
+//    if (i+1 == tempDeadline) {
+//        corpusCurrent= corpusCurrent+(investMoney-sumCorpusCurrent);
+//    }
+//    console.log("本息："+everyMonthRepayMoney/100 +"  本金:"+corpusCurrent/100+"  利息:"+interestCurrent/100);
+//}
 
 
 //
