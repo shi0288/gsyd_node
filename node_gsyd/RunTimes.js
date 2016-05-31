@@ -22,7 +22,6 @@ RunTimes.prototype.start = function () {
                 cb(err);
             });
         },
-        //start web
         function (cb) {
             loanTask.run();
             cb(null, "success");
