@@ -9,13 +9,31 @@ var moment = require('moment');
 var digestUtil = util.digestUtil;
 var dateUtil = util.dateUtil;
 
+
+var service = require('mcp_service');
+var calculateService = service.calculateService;
+
+
 var util = require('mcp_util');
 var dateMathUtil = util.dateMathUtil;
 
-console.log(dateMathUtil.daysBetween(dateMathUtil.dateMonthAdd('2016-08-30', 31,-4+1),dateMathUtil.dateMonthAdd('2016-08-30', 2,-4+0)));
+//console.log(dateMathUtil.daysBetween('2016-7-7 12:23:33','2016-06-15 00:00:00'));
+//
+//console.log(dateMathUtil.dateToString(dateMathUtil.dateMonthAdd('2017-03-23 00:00:00', 31, -11)));
+var body = {};
+body.deadline = 10;
+body.live_deadline = 12;
+body.rate = 0.23;
+body.live_money = 1000000;
+body.final_time = '2017-01-26';
+body.day_month = 26;
+body.accrue_time = '2016-06-08';
 
 
+var loanRepayObjArr = calculateService.outDebxCal(body);
 
+
+//var firstMoneyDaysNum = dateMathUtil.daysBetween(loanRepayObjArr[i].repay_day, loanObj.accrue_time);
 
 
 //
@@ -24,7 +42,6 @@ console.log(dateMathUtil.daysBetween(dateMathUtil.dateMonthAdd('2016-08-30', 31,
 //    "from  invest_repay where invest_repay.status=0 and invest.id=invest_repay.invest_id)   as sumWaitMoney  " +
 //    "from invest LEFT JOIN loan  on invest.loan_id=loan.id where invest.status=1200 and (loan.status=1400 or loan.status=1500 or loan.status=1600)  and invest.user_id='" + "q001" + "'";
 //console.log(sql);
-
 
 
 //
